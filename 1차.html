@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CD 선반</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #cd-shelf {
+      display: flex;
+      justify-content: center;
+      gap: 3px;
+      overflow-x: auto;
+      padding: 20px 0;
+      width: 400px;
+      border-bottom: 4px solid #333;
+    }
+
+    .cd {
+      width: 14px;
+      height: 110px;
+      background: gray;
+      border-radius: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      flex-shrink: 0;
+      position: relative;
+      transform-origin: top center;
+      margin-bottom: 4px;
+    }
+
+    .cd:hover {
+      transform: translateY(-12px) scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    #cd-info-popup {
+      position: absolute;
+      background: #222;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: none;
+      color: white;
+      z-index: 1000;
+      pointer-events: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    #cd-canvas {
+      width: 90%;
+      height: 800px;
+      padding-top: 250px;
+      background: #181818;
+      border-top: 2px solid #333;
+      position: relative;
+    }
+
+    .rotating-cd {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, white 10%, #999 40%, #000 100%);
+       transition: top 0.2s ease, left 0.2s ease, opacity 0.3s ease, filter 0.3s ease;
+      animation: spin 4s linear infinite;
+      opacity: 0.85;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+        .delete-zone {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px dashed #e63946;
+      color: #e63946;
+      font-size: 28px;
+      text-align: center;
+      line-height: 80px;
+      display: none;
+      z-index: 1000;
+      background: rgba(0,0,0,0.3);
+    }
+    .delete-zone.hover {
+      background: #e63946;
+      color: #fff;
+      border-style: solid;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cd-shelf">
+    <div class="cd" data-title="물의 도시" data-desc="물소리 기반 사운드 앨범" data-color="#4BA3C7" data-index="1"></div>
+    <div class="cd" data-title="바람의 도시" data-desc="바람과 기계음의 혼합" data-color="#89CFF0" data-index="2"></div>
+    <!-- 필요한 만큼 더 추가 -->
+  </div>
+
+  <div id="cd-info-popup"></div>
+  <div id="delete-zone" class="delete-zone">&#10005;</div>
+
+  <div id="cd-canvas"></div>
+
+  <script>
+    const cds = document.querySelectorAll('.cd');
+    const popup = document.getElementById('cd-info-popup');
+    const canvas = document.getElementById('cd-canvas');
+const deleteZone = document.getElementById('delete-zone');
+    cds.forEach(cd => {
+      // 색상 적용
+      const color = cd.dataset.color || '#888';
+      cd.style.backgroundColor = color;
+
+      // Hover 이벤트
+      cd.addEventListener('mouseenter', () => {
+        popup.innerHTML = `<strong>${cd.dataset.title}</strong><br>${cd.dataset.desc}`;
+        popup.style.display = 'block';
+
+        const rect = cd.getBoundingClientRect();
+        popup.style.top = window.scrollY + rect.top + 'px';
+        popup.style.left = window.scrollX + rect.right + 10 + 'px';
+      });
+
+      cd.addEventListener('mouseleave', () => {
+        popup.style.display = 'none';
+      });
+
+      // Click 시 회전 CD 생성
+      cd.addEventListener('click', () => {
+        const cdIndex = cd.dataset.index;
+        if (cdIndex === "1" || cdIndex === "2") {
+          const newCD = document.createElement('div');
+          newCD.classList.add('rotating-cd');
+
+          const x = Math.random() * (canvas.clientWidth - 80);
+          const y = Math.random() * (canvas.clientHeight - 80);
+
+          newCD.style.left = `${x}px`;
+          newCD.style.top = `${y}px`;
+
+          newCD.style.background = `radial-gradient(circle at center, ${color} 10%, #333 60%, #000 100%)`;
+
+          canvas.appendChild(newCD);
+          enableDrag(newCD);
+        }
+      });
+    });
+    function enableDrag(target) {
+      target.addEventListener('mousedown', (e) => {
+        deleteZone.style.display = "block";
+        let shiftX = e.clientX - target.getBoundingClientRect().left;
+        let shiftY = e.clientY - target.getBoundingClientRect().top;
+
+        const onMouseMove = (event) => {
+          const canvasRect = canvas.getBoundingClientRect();
+          const x = event.clientX - shiftX - canvasRect.left;
+          const y = event.clientY - shiftY - canvasRect.top;
+          target.style.left = `${x}px`;
+          target.style.top = `${y}px`;
+
+          const dzRect = deleteZone.getBoundingClientRect();
+          if (
+            event.clientX >= dzRect.left &&
+            event.clientX <= dzRect.right &&
+            event.clientY >= dzRect.top &&
+            event.clientY <= dzRect.bottom
+          ) {
+            deleteZone.classList.add('hover');
+          } else {
+            deleteZone.classList.remove('hover');
+          }
+        };
+
+                const onMouseUp = (event) => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          const dzRect = deleteZone.getBoundingClientRect();
+          if (
+  event.clientX >= dzRect.left &&
+  event.clientX <= dzRect.right &&
+  event.clientY >= dzRect.top &&
+  event.clientY <= dzRect.bottom
+) {
+  target.style.transition = 'transform 0.3s ease, opacity 0.4s ease, filter 0.4s ease';
+  target.style.transform = 'scale(0.7)';
+  target.style.opacity = '0';
+  target.style.filter = 'blur(3px)';
+  setTimeout(() => target.remove(), 400);
+}
+          deleteZone.style.display = "none";
+          deleteZone.classList.remove('hover');
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
+    }
+  </script>
+
+</body>
+</html>
