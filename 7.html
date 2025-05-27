@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CD Player Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Archivo Black', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      color: white;
+      background: linear-gradient(to bottom, #000000, #2a2d35);
+      background-attachment: fixed;
+      cursor: none;
+    }
+
+* {
+  cursor: none !important;
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(220, 220, 220, 0.9); /* 기본 밝은 회색 */
+  pointer-events: none;
+  z-index: 9999;
+  transition: background-color 0.2s ease, transform 0.08s ease;
+  transform: translate(-50%, -50%);
+}
+
+/* pointer 상태 감지 */
+.pointer-hover #custom-cursor {
+  background-color: blue;
+}
+    h1 {
+      padding-top: 30px;
+      margin: 30px 0 0px;
+      font-size: 30pt;
+    }
+
+    h2 {
+      font-size: 16pt;
+      padding-bottom: 15px;
+    }
+
+    button#add-player {
+      margin-top: 10px;
+      margin-bottom: 30px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button#add-player:hover {
+      background: #555;
+    }
+
+    #cd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 0px;
+      padding: 40px;
+      max-width: 90vw;
+      justify-content: center;
+    }
+
+    .cd-cell {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      border: 2px solid #444;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .cd-cell:active {
+      cursor: grabbing;
+    }
+
+    .cd-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .player-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      max-width: 100vw;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .player-container {
+      position: relative;
+      width: 60vw;
+      max-width: 800px;
+      aspect-ratio: 1 / 0.6;
+      border-radius: 16px;
+      overflow: visible;
+      opacity: 1;
+      transform: scale(1);
+      transition: transform 0.9s ease-out, opacity 0.9s ease-out;
+    }
+
+    .player-container.entering {
+      animation: fadeInScale 0.8s ease forwards;
+    }
+
+    .player-container.highlight {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+
+    .layered-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+       filter: drop-shadow(0px 12px 24px rgba(0, 0, 0, 0.5));
+  transition: filter 0.3s ease;
+    }
+
+    .button {
+      position: absolute;
+      width: 15%;
+      height: auto;
+      object-fit: contain;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    video.cd-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60%;
+      height: auto;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 5;
+      animation: spin 6s linear infinite;
+
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .player-container.fade-out {
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .cd-video-rect {
+      position: absolute;
+      width: 105%;
+      height: 105%;
+      top: 35%;
+      left: 58.3%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      pointer-events: none;
+      border-radius: 0;
+      animation: none;
+
+    }
+
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+  transition: background 0.3s;
+}
+
+/* 트랙 호버 시 */
+input[type="range"]:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* 슬라이더 손잡이 (웹킷 브라우저) */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s;
+}
+
+/* 눌렀을 때 살짝 작아지기 */
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(0.9);
+}
+
+/* Firefox 지원 */
+input[type="range"]::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+
+  </style>
+</head>
+<body>
+  <img src="images/title2.png" alt="Title Image" style="max-width: 1960px; margin-top: 40px;" />
+  <img src="images/second title2.png" alt="Title Image2" style="max-width: 800px; margin-top: 0px;" />
+
+  <div id="cd-grid"></div>
+  <button id="add-player">+ Add Player</button>
+  <div class="player-wrapper" id="playerWrapper"></div>
+<div id="custom-cursor"></div>
+  <script>
+    const availableCDs = [1, 2, 3, 4, 5, 6, 7];
+    const cdGrid = document.getElementById('cd-grid');
+    const wrapper = document.getElementById('playerWrapper');
+    const addButton = document.getElementById('add-player');
+
+    availableCDs.forEach(i => {
+      const cell = document.createElement('div');
+      cell.className = 'cd-cell';
+      cell.setAttribute('draggable', 'true');
+      cell.dataset.cdIndex = i;
+
+      const img = document.createElement('img');
+      img.src = `images/cd${i}.png`;
+      cell.appendChild(img);
+
+      cell.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('cd-index', i);
+      });
+
+      cdGrid.appendChild(cell);
+    });
+
+    function createPlayerInstance(index) {
+      const container = document.createElement('div');
+      container.className = 'player-container entering';
+      setTimeout(() => container.classList.remove('entering'), 400);
+
+      const playerImg = document.createElement('img');
+      playerImg.src = 'images/player.png';
+      playerImg.className = 'layered-image';
+      container.appendChild(playerImg);
+
+      const btn1 = document.createElement('img');
+      btn1.src = 'images/btn1.png';
+      btn1.className = 'button';
+      btn1.style.top = '38.6%';
+      btn1.style.left = '10.5%';
+
+      const btn2 = document.createElement('img');
+      btn2.src = 'images/btn2.png';
+      btn2.className = 'button';
+      btn2.style.top = '63.9%';
+      btn2.style.left = '32.7%';
+
+      let videoElement = null;
+      let audioElement = null;
+
+
+      btn1.addEventListener('mousedown', () => {
+  btn1.style.opacity = '0';
+  btn1.style.pointerEvents = 'none';
+
+  setTimeout(() => {
+    btn1.style.opacity = '1';
+    btn1.style.pointerEvents = 'auto';
+  }, 200);
+  if (videoElement) {
+    if (videoElement.paused) {
+      videoElement.play().catch(err => console.warn("Video play error:", err));
+      if (audioElement && audioElement.readyState >= 2) {
+        audioElement.play().catch(err => console.warn("Audio play blocked:", err));
+      }
+      videoElement.style.animationPlayState = 'running';
+    } else {
+      videoElement.pause();
+      if (audioElement) audioElement.pause();
+      videoElement.style.animationPlayState = 'paused';
+    }
+    // ✅ 버튼 누르면 사라지게 하기 (한 번만 누르면 됨)
+    btn1.style.opacity = '0';
+    btn1.style.pointerEvents = 'none'; // 클릭 불가 처리
+  }
+});
+
+
+  btn2.addEventListener('mousedown', () => {
+    btn2.style.opacity = '0';});
+    document.addEventListener('mouseup', () => {
+    btn2.style.opacity = '1';});
+
+btn2.addEventListener('click', () => {
+  container.classList.add('fade-out');
+  if (audioElement) audioElement.pause();
+  setTimeout(() => container.remove(), 400);
+});
+
+
+const volumeSlider = document.createElement('input');
+  volumeSlider.type = 'range';
+  volumeSlider.min = '0';
+  volumeSlider.max = '1';
+  volumeSlider.step = '0.01';
+  volumeSlider.value = '0.5';
+  volumeSlider.style.width = '60%';
+  volumeSlider.style.position = 'absolute';
+  volumeSlider.style.marginTop = '15px';
+  volumeSlider.style.bottom = '4px';
+  volumeSlider.style.left = '50%';
+  volumeSlider.style.transform = 'translateX(-50%)';
+  volumeSlider.style.zIndex = '15';
+  volumeSlider.style.opacity = '0.7';
+  volumeSlider.style.transition = 'opacity 0.3s';
+
+container.appendChild(volumeSlider);
+volumeSlider.addEventListener('input', () => {
+  if (audioElement) {
+    audioElement.volume = parseFloat(volumeSlider.value);
+  }
+});
+container.addEventListener('mouseenter', () => {
+  volumeSlider.style.opacity = '1';
+});
+container.addEventListener('mouseleave', () => {
+  volumeSlider.style.opacity = '0.7';
+});
+
+      container.appendChild(btn1);
+      container.appendChild(btn2);
+
+      container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        container.classList.add('highlight');
+      });
+
+      container.addEventListener('dragleave', () => {
+        container.classList.remove('highlight');
+      });
+
+      container.addEventListener('drop', (e) => {
+  e.preventDefault();
+  container.classList.remove('highlight');
+
+  const cdIndex = e.dataTransfer.getData('cd-index');
+  if (!cdIndex || videoElement) return;
+
+  videoElement = document.createElement('video');
+  videoElement.autoplay = true;
+  videoElement.loop = true;
+  videoElement.playsInline = true;
+  videoElement.muted = false; // ✅ 이제 소리를 내야 하니까 false
+
+  audioElement = new Audio();
+  audioElement.loop = true;
+
+  if (cdIndex === '1') {
+    videoElement.src = 'video/grass.webm';
+    videoElement.classList.add('cd-video-rect');
+    // audio 없음
+  } else if (cdIndex === '2') {
+    videoElement.src = 'video/fire.webm';
+    videoElement.classList.add('cd-video-rect');
+    audioElement.src = 'audio/fire.mp3';
+  } else if (cdIndex === '3') {
+    videoElement.src = 'video/rain.webm';
+    videoElement.classList.add('cd-video-rect');
+    audioElement.src = 'audio/rain.mp3';
+  } 
+else if (cdIndex === '4') {
+    videoElement.src = 'video/bird.webm';
+    videoElement.classList.add('cd-video-rect');
+    audioElement.src = 'audio/bird.mp3';
+  }
+  else {
+    videoElement.src = `video/cd${cdIndex}.mp4`;
+    videoElement.classList.add('cd-video');
+  }
+
+  container.appendChild(videoElement);
+
+  if (audioElement.src) {
+    container.appendChild(audioElement);
+    audioElement.addEventListener('canplaythrough', () => {
+      audioElement.play().catch(err => console.warn("Audio autoplay blocked:", err));
+    });
+  }
+
+  videoElement.addEventListener('canplaythrough', () => {
+    videoElement.play().catch(err => console.warn("Video autoplay blocked:", err));
+  });
+});
+
+      return container;
+    }
+
+    addButton.addEventListener('click', () => {
+      const newPlayer = createPlayerInstance();
+      wrapper.appendChild(newPlayer);
+    });
+
+    wrapper.appendChild(createPlayerInstance());
+
+    const customCursor = document.getElementById('custom-cursor');
+
+// 마우스 이동에 따라 커서 위치 이동
+document.addEventListener('mousemove', (e) => {
+  customCursor.style.top = `${e.clientY}px`;
+  customCursor.style.left = `${e.clientX}px`;
+
+  // 현재 hover 중인 요소가 pointer인지 감지
+  const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+  if (hoveredElement && getComputedStyle(hoveredElement).cursor === 'pointer') {
+    document.body.classList.add('pointer-hover');
+  } else {
+    document.body.classList.remove('pointer-hover');
+  }
+});
+document.addEventListener('mousedown', () => {
+  customCursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+});
+document.addEventListener('mouseup', () => {
+  customCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+});
+
+  </script>
+</body>
+</html>
