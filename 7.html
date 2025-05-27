@@ -412,13 +412,11 @@ container.addEventListener('mouseleave', () => {
     videoElement.src = 'video/rain.webm';
     videoElement.classList.add('cd-video-rect');
     audioElement.src = 'audio/rain.mp3';
-  } 
-else if (cdIndex === '4') {
+  } else if (cdIndex === '4') {
     videoElement.src = 'video/bird.webm';
     videoElement.classList.add('cd-video-rect');
     audioElement.src = 'audio/bird.mp3';
-  }
-  else {
+  } else {
     videoElement.src = `video/cd${cdIndex}.mp4`;
     videoElement.classList.add('cd-video');
   }
