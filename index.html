@@ -116,36 +116,6 @@
       object-fit: cover;
       pointer-events: none;
     }
-.cd-cell {
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.cd-cell:hover {
-  transform: scale(1.06);
-}
-
-.cd-popup {
-  position: absolute;
-  bottom: 110%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  color: black;
-  padding: 5px 10px;
-  border: 1px solid black;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-}
-
-.cd-cell:hover .cd-popup {
-  opacity: 1;
-}
 
     .player-wrapper {
       display: flex;
@@ -298,11 +268,9 @@ input[type="range"]::-moz-range-thumb {
   <div id="cd-grid"></div>
   <button id="add-player">+ Add Player</button>
   <div class="player-wrapper" id="playerWrapper"></div>
-
+  
 <div id="custom-cursor"></div>
   <script>
-
-    
     const availableCDs = [1, 2, 3, 4, 5, 6, 7];
     const cdGrid = document.getElementById('cd-grid');
     const wrapper = document.getElementById('playerWrapper');
