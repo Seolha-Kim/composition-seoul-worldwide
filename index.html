@@ -115,7 +115,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none;
+  
 }
 
 .cd-popup {
@@ -137,10 +137,12 @@
   transition: opacity 0.2s ease;
   z-index: 10;
 }
+ .cd-popup.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-.cd-cell:hover .cd-popup {
-  opacity: 1;
-}
+
     .cd-cell:active {
       cursor: grabbing;
     }
@@ -304,6 +306,8 @@ input[type="range"]::-moz-range-thumb {
   <button id="add-player">+ Add Player</button>
   <div class="player-wrapper" id="playerWrapper"></div>
 <div id="custom-cursor"></div>
+  
+
   <script>
     const availableCDs = [1, 2, 3, 4, 5, 6, 7];
     const cdGrid = document.getElementById('cd-grid');
@@ -323,6 +327,7 @@ input[type="range"]::-moz-range-thumb {
       cell.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('cd-index', i);
       });
+
 
       cdGrid.appendChild(cell);
     });
@@ -522,7 +527,7 @@ document.addEventListener('mouseup', () => {
 
   </script>
 
-   <script>
+     <script>
     const availableCDs = [1, 2, 3, 4, 5, 6, 7];
     const cdGrid = document.getElementById('cd-grid');
 
@@ -550,6 +555,10 @@ document.addEventListener('mouseup', () => {
       popup.className = 'cd-popup';
       popup.textContent = cdNames[i] || `CD ${i}`;
       cell.appendChild(popup);
+
+      cell.addEventListener('click', () => {
+        popup.classList.toggle('show');
+      });
 
       cell.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('cd-index', i);
