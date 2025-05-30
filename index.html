@@ -37,6 +37,10 @@ body::after {
   pointer-events: none;
 }
 
+#main-container {
+  padding: 40px;
+}
+
 * {
   cursor: none !important;
 }
@@ -71,7 +75,10 @@ body::after {
     }
 
     button#add-player {
-      margin-top: 40px;
+      position: sticky;
+      top: 210px;
+      z-index: 20;
+      margin-top: 10px;
       margin-bottom: 20px;
       padding: 10px 20px;
       font-size: 14px;
