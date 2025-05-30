@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
   <title>CD Player Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+  <!-- <head> 안에 추가 -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300&display=swap" rel="stylesheet">
+
   <style>
     html, body {
       height: 100%;
@@ -99,6 +103,30 @@ body::after {
     button#add-player:hover {
       background: #555;
     }
+#about-button {
+  position: fixed;
+  top: 26px;
+  left: 26px;
+  padding: 8px 16px;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 300;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 200;
+  font-size: 24px;
+  z-index: 100;
+  opacity:0.7;
+  transition: background 0.3s ease;
+}
+
+#about-button:hover {
+  opacity:1;
+  text-decoration: underline; /* 호버 시 밑줄 표시 */
+  text-decoration-color: white; /* 밑줄 색상 지정 */
+  text-underline-offset: 4px; /* 밑줄과 글자 사이 간격 (선택) */
+}
+
 
  #cd-grid {
   position: sticky;
@@ -326,7 +354,9 @@ input[type="range"]::-moz-range-thumb {
   </style>
 </head>
 <body>
-  <img src="images/title2.png" alt="Title Image" style="max-width: 1960px; width:100%; margin-top: 40px;" />
+  <a href="about.html" id="about-button">About</a>
+
+  <img src="images/title2.png" alt="Title Image" style="max-width: 1960px; width:100%; margin-top: 60px;" />
   <img src="images/second title2.png" alt="Title Image2" style="max-width: 600px; width:100%; margin-top: 5px;" />
 
   <div id="cd-grid"></div>
