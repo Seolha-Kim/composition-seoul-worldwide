@@ -21,6 +21,21 @@
       background-attachment: fixed;
       cursor: none;
     }
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -60;
+  left: 0;
+  width: 100%;
+ 
+  height: 100%; /* 원하는 이미지 높이 */
+  background-image: url('images/grass1.png'); /* 깃허브 내 상대 경로 */
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: contain;
+  z-index: -1;
+  pointer-events: none;
+}
 
 * {
   cursor: none !important;
