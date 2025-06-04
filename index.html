@@ -231,7 +231,7 @@ body::after {
     .player-container {
       position: relative;
       width: 60vw;
-      max-width: 800px;
+      max-width: 650px;
       aspect-ratio: 1 / 0.6;
       border-radius: 16px;
       overflow: visible;
@@ -369,6 +369,25 @@ input[type="range"]::-moz-range-thumb {
     const cdGrid = document.getElementById('cd-grid');
     const wrapper = document.getElementById('playerWrapper');
     const addButton = document.getElementById('add-player');
+const cdSources = {
+  1: 'audio/grass.mp3',
+  2: 'audio/fire.mp3',
+  3: 'audio/rain.wav',
+  4: 'audio/bird.mp3',
+  5: 'audio/wind.mp3',
+  6: 'audio/waterfall.ogg',
+  7: 'audio/wave.wav'
+};
+const volumeMap = {
+  1: 0.5,
+  2: 1.0,
+  3: 0.6,
+  4: 1.0,
+  5: 0.9,
+  6: 0.2,
+  7: 0.9
+};
+
 
     availableCDs.forEach(i => {
       const cell = document.createElement('div');
@@ -536,9 +555,18 @@ container.addEventListener('mouseleave', () => {
     videoElement.classList.add('cd-video-rect');
     audioElement.src = 'audio/waterfall.ogg';
     
-  }else {
+  } else if (cdIndex === '7') {
+    videoElement.src = 'video/wave.webm';
+    videoElement.classList.add('cd-video-rect');
+    audioElement.src = 'audio/wave.wav';
+
+  } else {
     videoElement.src = `video/cd${cdIndex}.mp4`;
     videoElement.classList.add('cd-video');
+  }
+
+  if (volumeMap[parseInt(cdIndex)]) {
+    audioElement.volume = volumeMap[parseInt(cdIndex)];
   }
 
   container.appendChild(videoElement);
@@ -589,45 +617,6 @@ document.addEventListener('mouseup', () => {
 
   </script>
 
-     <script>
-    const availableCDs = [1, 2, 3, 4, 5, 6, 7];
-    const cdGrid = document.getElementById('cd-grid');
-
-    const cdNames = {
-      1: "잔디밭",
-      2: "모닥불",
-      3: "빗소리",
-      4: "숲속 새소리",
-      5: "파도",
-      6: "시냇물",
-      7: "밤의 벌레"
-    };
-
-    availableCDs.forEach(i => {
-      const cell = document.createElement('div');
-      cell.className = 'cd-cell';
-      cell.setAttribute('draggable', 'true');
-      cell.dataset.cdIndex = i;
-
-      const img = document.createElement('img');
-      img.src = `images/cd${i}.png`;
-      cell.appendChild(img);
-
-      const popup = document.createElement('div');
-      popup.className = 'cd-popup';
-      popup.textContent = cdNames[i] || `CD ${i}`;
-      cell.appendChild(popup);
-
-      cell.addEventListener('click', () => {
-        popup.classList.toggle('show');
-      });
-
-      cell.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('cd-index', i);
-      });
-
-      cdGrid.appendChild(cell);
-    });
-  </script>
+     
 </body>
 </html>
