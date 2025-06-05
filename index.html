@@ -19,6 +19,13 @@
 @media (max-width: 1500px) player-containaer {
   width:70%;
 }
+
+    @font-face {
+    font-family: 'DOSMyungjo';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSMyungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
     body {
       font-family: 'Archivo Black', sans-serif;
       display: flex;
@@ -90,8 +97,9 @@ body::after {
       margin-top: 10px;
       margin-bottom: 20px;
       padding: 10px 20px;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 19px;
+      font-family: 'DOSMyungjo', serif;
+      font-weight: 100;
       background: #222;
       color: white;
       border: none;
@@ -105,14 +113,15 @@ body::after {
     }
 #about-button {
   position: center;
- 
+ font-family: 'DOSMyungjo', serif;
+      font-weight: 100;
   margin-top: 24px;
-  font-family: 'Archivo', sans-serif;
+  
   
   color: white;
   text-decoration: none;
   border-radius: 6px;
-  font-weight: 200;
+  
   font-size: 23px;
   z-index: 100;
   opacity:0.7;
