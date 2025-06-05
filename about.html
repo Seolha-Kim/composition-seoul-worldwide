@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <img src="images/title2.png" alt="Title Image" style="max-width: 1960px; width:100%; margin-top: 5px;" />
+
+  <img src="images/title2.png" alt="Title Image" style="max-width: 1020px; width:100%; margin-top: 22px;" />
+  <img src="images/serv_title.png" alt="Title Image3" style="max-width: 920px; width:100%; margin-top: -10px; margin-bottom: 18px;" />
 
 
   <meta charset="UTF-8" />
@@ -10,6 +12,13 @@
 
 
   <style>
+    @font-face {
+    font-family: 'DOSMyungjo';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSMyungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
        body {
       background: #111;
       color: white;
@@ -21,18 +30,22 @@
     }
 
     h1 {
-      margin-bottom: 10px;
+      margin-bottom: -30px;
+      font-family: 'DOSMyungjo', serif;
+      font-weight: 100;
+      font-style: italic;
+      opacity: 0.7;
     }
 
     .player-container {
       position: relative;
       width: 60vw;
-      max-width: 650px;
+      max-width: 670px;
       aspect-ratio: 1 / 0.6;
       margin-top: 40px;
-      background: #222;
+      
       border-radius: 16px;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .layered-image {
@@ -65,21 +78,193 @@
       left: 32.6%;
     }
 
+.instruction-overlay {
+  position: absolute;
+  top: 2%;
+  left: 49%;
+  transform: translateX(-50%);
+  width: 150%; /* ✅ 요거 추가! */
+  max-width: 1500px;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 20;
+}
+.instruction-overlay2 {
+  position: relative;
+  display: block;
+  margin-top: 10px;
+  width: 75%;
+  max-width: 1300px;
+  min-width: 300px;
+  opacity: 0.85;
+  z-index: 20;
+}
+
+.cd-popup {
+  position: absolute;
+  top: 105%; /* CD 위쪽에 뜨게 */
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 12px 13px;
+  border-radius: 0px;
+  border : solid 1.2px white;
+  font-family: 'DOSMyungjo', serif;
+      font-weight: 100;
+  font-size: 18px;
+  
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.cd-cell:hover .cd-popup {
+  opacity: 1;
+}
+
+
+#home-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 300;
+  color: white;
+  font-size: 20px;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+
+#home-button:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+
+#cd-grid {
+  position: sticky;
+  top: 35px;
+  z-index: 20;
+  display: grid;
+  background-color: black;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0px;
+  align-content: center;
+  padding: 40px;
+  margin-top: 65px;
+  height: 105px;
+  width: 900px;
+  border-radius: 100px;
+  max-width: 100vw;
+  justify-content: center;
+  overflow: visible; /* 🔥 팝업 잘리던 문제 해결 */
+}
+
+.cd-cell {
+  width: 120px;
+  height: 120px;
+  align-content: center;
+  position: relative;
+  padding: 0px;
+  overflow: visible;
+  cursor: grab;
+  transition: transform 0.3s ease;
+}
+@keyframes rotate-slowly {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cd-cell:hover img {
+  animation: rotate-slowly 8s linear infinite;
+}
+
+
+.cd-cell:hover {
+  transform: scale(1.08);
+}
+
+.cd-cell:active {
+  cursor: grabbing;
+}
+
+.cd-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+}
   </style>
 </head>
 <body>
-  <h1>About This Site</h1>
+  <a href="index.html" id="home-button">Home</a>
+
+  <h1>How to use this site :</h1>
+  <div id="cd-grid"></div>
+<img src="images/instruction2.png" class="instruction-overlay2" alt="Instruction image2" />
     <div class="player-container">
     <img src="images/player.png" class="layered-image" alt="Player visual" />
     <img src="images/btn1.png" class="button" id="btn1" alt="Play button" />
     <img src="images/btn2.png" class="button" id="btn2" alt="Remove button" />
+<img src="images/instruction.png" class="instruction-overlay" alt="Instruction image" />
+
   </div>
 
   <p></p>
 </body>
   <script>
+    const availableCDs = [1, 2, 3, 4, 5, 6, 7];
+    const cdGrid = document.getElementById('cd-grid');
     const btn1 = document.getElementById('btn1');
     const btn2 = document.getElementById('btn2');
+
+    availableCDs.forEach(i => {
+      const cell = document.createElement('div');
+      cell.className = 'cd-cell';
+      cell.setAttribute('draggable', 'true');
+      cell.dataset.cdIndex = i;
+
+      const img = document.createElement('img');
+      img.src = `images/cd${i}.png`;
+      cell.appendChild(img);
+
+      cell.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('cd-index', i);
+      });
+
+const cdDescriptions = {
+  1: "grass.mp3 _ step on the grass",
+  2: "fireplace.mp3 _ sound of a campfire",
+  3: "raining.mp3 _ rainy day",
+  4: "birds.mp3 _ birds in june, village sound",
+  5: "wind.mp3 _ steady wind, cloud",
+  6: "waterfall.mp3 _ small waterfall",
+  7: "wave.mp3 _ beach, wave"
+};
+const popup = document.createElement('div');
+  popup.className = 'cd-popup';
+  popup.textContent = cdDescriptions[i] || `CD #${i}`;
+ // 여기를 원하는 설명으로 바꿔줘!
+
+  cell.appendChild(popup);
+
+  cell.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('cd-index', i);
+  });
+
+      cdGrid.appendChild(cell);
+    });
+
 
     btn1.addEventListener('click', () => {
       btn1.classList.add('hidden');
