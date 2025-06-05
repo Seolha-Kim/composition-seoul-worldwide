@@ -296,7 +296,7 @@ body::after {
       position: absolute;
       width: 105%;
       height: 105%;
-      top: 35%;
+      top: 34.5%;
       left: 58.3%;
       transform: translate(-50%, -50%);
       z-index: 5;
@@ -349,6 +349,21 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.cd-title-image {
+  position: absolute;
+  top: 43.5%;
+  left: 30.2%;
+  transform: translateX(-50%);
+  width: 21.5%;
+  pointer-events: none;
+  animation: blink 2s infinite ease-in-out;
+  z-index: 20;
+}
 
   </style>
 </head>
@@ -365,6 +380,8 @@ input[type="range"]::-moz-range-thumb {
   
 
   <script>
+    
+
     const availableCDs = [1, 2, 3, 4, 5, 6, 7];
     const cdGrid = document.getElementById('cd-grid');
     const wrapper = document.getElementById('playerWrapper');
@@ -373,7 +390,7 @@ const cdSources = {
   1: 'audio/grass.mp3',
   2: 'audio/fire.mp3',
   3: 'audio/rain.wav',
-  4: 'audio/bird.mp3',
+  4: 'audio/bird.m4a',
   5: 'audio/wind.mp3',
   6: 'audio/waterfall.ogg',
   7: 'audio/wave.wav'
@@ -529,6 +546,11 @@ container.addEventListener('mouseleave', () => {
   audioElement = new Audio();
   audioElement.loop = true;
 
+const titleImg = document.createElement('img');
+titleImg.src = `images/letter_${cdIndex}.png`;
+titleImg.className = 'cd-title-image';
+container.appendChild(titleImg);
+
   if (cdIndex === '1') {
     videoElement.src = 'video/grass.webm';
     videoElement.classList.add('cd-video-rect');
@@ -544,7 +566,7 @@ container.addEventListener('mouseleave', () => {
   } else if (cdIndex === '4') {
     videoElement.src = 'video/bird.webm';
     videoElement.classList.add('cd-video-rect');
-    audioElement.src = 'audio/bird.mp3';
+    audioElement.src = 'audio/bird.m4a';
   } else if (cdIndex === '5') {
     videoElement.src = 'video/cloud.webm';
     videoElement.classList.add('cd-video-rect');
