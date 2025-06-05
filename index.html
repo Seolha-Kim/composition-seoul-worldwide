@@ -419,7 +419,7 @@ input[type="range"]::-moz-range-thumb {
     const wrapper = document.getElementById('playerWrapper');
     const addButton = document.getElementById('add-player');
 const cdSources = {
-  1: 'audio/grass.mp3',
+  1: 'audio/grass.wav',
   2: 'audio/fire.mp3',
   3: 'audio/rain.wav',
   4: 'audio/bird.m4a',
@@ -586,7 +586,7 @@ container.appendChild(titleImg);
   if (cdIndex === '1') {
     videoElement.src = 'video/grass.webm';
     videoElement.classList.add('cd-video-rect');
-    // audio 없음
+    audioElement.src = 'audio/grass.wav';
   } else if (cdIndex === '2') {
     videoElement.src = 'video/fire.webm';
     videoElement.classList.add('cd-video-rect');
