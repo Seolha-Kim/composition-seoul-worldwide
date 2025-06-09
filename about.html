@@ -99,6 +99,10 @@
   opacity: 0.85;
   z-index: 20;
 }
+.instruction-overlay3 {
+  width:50%;
+  opacity: 0.85;
+}  
 
 .cd-popup {
   position: absolute;
@@ -123,6 +127,36 @@
 
 .cd-cell:hover .cd-popup {
   opacity: 1;
+}
+
+/* 🔽 슬라이더 관련 CSS */
+.volume-slider {
+  display:  center;
+  margin-top: 40px;
+  width: 500px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 500px;
+  height: 6px;
+  background: #ccc;
+  border-radius: 5px;
+  outline: none;
+  opacity: 0.7;
+  transition: background 0.3s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 19px;
+  height: 19px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 3px 3px rgba(0, 0, 0, 0.5);
+  opacity:  1;
 }
 
 
@@ -219,7 +253,11 @@
 <img src="images/instruction.png" class="instruction-overlay" alt="Instruction image" />
 
   </div>
-
+<!-- 🔽 슬라이더 영역 (HTML) -->
+<div class="volume-slider">
+  <input type="range" min="0" max="100" value="50" class="slider" id="volumeControl">
+</div>
+<img src="images/volume inst.png" class="instruction-overlay3" alt="Instruction image3" />
   <p></p>
 </body>
   <script>
@@ -279,5 +317,12 @@ const popup = document.createElement('div');
         btn2.classList.remove('hidden');
       }, 400);
     });
+// 🔽 슬라이더 이벤트 핸들링 JS
+const volumeSlider = document.getElementById('volumeControl');
+volumeSlider.addEventListener('input', (e) => {
+  const volume = e.target.value;
+  console.log("볼륨:", volume); // 나중에 오디오와 연결 가능
+});
+
   </script>
 </html>
